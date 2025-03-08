@@ -1,4 +1,9 @@
-agno
-firecrawl-py==1.9.0
-pydantic
-streamlit
+agno>=0.1.0
+firecrawl>=0.1.0
+pydantic>=2.0.0
+streamlit>=1.26.0
+python-dotenv>=1.0.0
+requests>=2.28.0
+folium>=0.14.0
+streamlit-folium>=0.15.0
+streamlit-js-eval>=0.1.5
