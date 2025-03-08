@@ -74,14 +74,28 @@ def main():
         )
 
     with col2:
-        max_price = st.number_input(
-            "Maximum Price (in Crores)",
-            min_value=0.1,
-            max_value=100.0,
-            value=5.0,
-            step=0.1,
-            help="Enter your maximum budget in Crores"
-        )
+        # Create a two-column layout for min and max price
+        price_col1, price_col2 = st.columns(2)
+        
+        with price_col1:
+            min_price = st.number_input(
+                "Minimum Price (in Crores)",
+                min_value=0.0,
+                max_value=100.0,
+                value=0.5,
+                step=0.1,
+                help="Enter your minimum budget in Crores"
+            )
+            
+        with price_col2:
+            max_price = st.number_input(
+                "Maximum Price (in Crores)",
+                min_value=min_price,
+                max_value=100.0,
+                value=max(min_price + 1.0, 5.0),
+                step=0.1,
+                help="Enter your maximum budget in Crores"
+            )
         
         property_type = "Plot"  # Fixed to Plot as we're focusing only on plots
         st.info("🔍 Searching for plots only")
@@ -100,6 +114,7 @@ def main():
             with st.spinner("🔍 Searching for plots..."):
                 property_results = st.session_state.property_agent.find_properties(
                     city=city,
+                    min_price=min_price,
                     max_price=max_price,
                     property_category=property_category,
                     property_type=property_type

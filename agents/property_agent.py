@@ -19,6 +19,7 @@ class PropertyFindingAgent:
         self, 
         city: str,
         max_price: float,
+        min_price: float = 0.0,  # Added min_price parameter with default value
         property_category: str = "Residential",
         property_type: str = "Plot"
     ) -> str:
@@ -29,19 +30,20 @@ class PropertyFindingAgent:
             f"https://www.squareyards.com/sale/plot-for-sale-in-{formatted_location}/*",
             f"https://www.99acres.com/plots-in-{formatted_location}-ffid/*",
             f"https://housing.com/in/buy/plots/{formatted_location}/{formatted_location}",
-            f"https://www.magicbricks.com/property-for-sale/residential-plot/{formatted_location}-all/*",
+            f"https://www.magicbricks.com/property-for-sale-rent-in-{formatted_location}/Plots-Land-{formatted_location}",
         ]
         
+        # Updated prompt to include both min and max price filters
         raw_response = self.firecrawl.extract(
             urls=urls,
             params={
-                'prompt': f"""Extract ONLY 10 OR LESS different {property_category} Plots from {city} that cost less than {max_price} crores.
+                'prompt': f"""Extract ONLY 10 OR LESS different {property_category} Plots from {city} that cost between {min_price} and {max_price} crores.
                 
                 Requirements:
                 - Property Category: {property_category} plots only
                 - Property Type: Plot/Land only
                 - Location: {city}
-                - Maximum Price: {max_price} crores
+                - Price Range: Between {min_price} and {max_price} crores
                 - Include complete plot details with exact location
                 - IMPORTANT: Extract specific plot details including:
                   - Plot area in square feet
@@ -71,6 +73,7 @@ class PropertyFindingAgent:
         print("Processed Properties:", properties)
 
         
+        # Update the agent prompt to include min_price
         analysis = self.agent.run(
             f"""As a real estate expert, analyze these plots and market trends:
 
@@ -80,7 +83,7 @@ class PropertyFindingAgent:
             **IMPORTANT INSTRUCTIONS:**
             1. ONLY analyze plots from the above JSON data that match the user's requirements:
                - Property Category: {property_category}
-               - Maximum Price: {max_price} crores
+               - Price Range: Between {min_price} and {max_price} crores
             2. From the matching plots, select the 5 best plots
 
             Please provide your analysis in this format:
